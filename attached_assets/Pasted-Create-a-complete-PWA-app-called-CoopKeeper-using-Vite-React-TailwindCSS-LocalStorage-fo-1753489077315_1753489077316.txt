@@ -1,0 +1,77 @@
+Create a complete PWA app called “CoopKeeper” using:
+
+- Vite + React + TailwindCSS
+- LocalStorage for data (no backend)
+- Offline support (PWA manifest + installable)
+- All files in a single clean project structure
+
+🟡 COLOR PALETTE:
+- coopYellow: #F3D34A (backgrounds, highlights)
+- coopBrown: #6F4E37 (text, buttons)
+
+🧱 FEATURES:
+
+1. NAVIGATION (NavBar)
+- Tabs: Eggs | Tasks | Expenses | Chickens
+- Clicking switches between views
+- Highlight active tab
+
+2. EGGS VIEW
+- “+1 Egg” button adds to today’s egg count (based on date key)
+- Show total eggs collected today
+- Reset button clears today’s count
+- Save to localStorage using key: eggs-YYYY-MM-DD
+
+3. TASKS VIEW
+- Default daily tasks: Feed hens, Change water, Collect eggs, Clean bedding, Health check
+- Checkbox toggle per task
+- Save to localStorage using key: tasks-YYYY-MM-DD
+
+4. EXPENSES VIEW
+- Input: Description + Amount
+- Add button creates entry with today’s date
+- Show all entries, with total
+- Save to localStorage using key: coop-expenses
+
+5. CHICKENS VIEW
+- Show list of chickens in card format (photo, name, breed, age)
+- Floating “+” button opens modal
+- Modal lets user:
+  • Upload photo (or take pic)
+  • Input name
+  • Select breed (Broiler, Layer, Bantam, Other)
+  • Pick date of birth
+- Auto-calculate age (days, months, or years) based on DOB
+- Save to localStorage as array “coop-chickens”
+
+📦 STRUCTURE:
+- src/
+  • App.jsx (main switch view)
+  • index.css (Tailwind setup)
+  • main.jsx (render root)
+  • components/
+    - NavBar.jsx
+    - EggCounter.jsx
+    - TaskBoard.jsx
+    - Expenses.jsx
+    - Chickens.jsx
+    - AddChickenModal.jsx
+  • utils/
+    - calcAge.js (helper to convert DOB to age string)
+
+🧠 PERSISTENCE:
+- Use localStorage for all features
+- Load data on mount, save on changes
+
+📲 PWA:
+- Add manifest.json with app icon
+- Allow install to homescreen
+- Should work offline
+
+💅 STYLE:
+- Clean, round UI
+- Use Tailwind for spacing and responsiveness
+- Buttons: rounded-full, coopBrown background, white text
+- Cards: white bg, rounded-xl, shadow
+
+✅ Deliver a running project I can preview and install, fully working with all features above.
