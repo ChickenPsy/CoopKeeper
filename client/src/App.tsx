@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from "react";
+import * as React from "react";
 import NavBar from "./components/NavBar";
-import EggCounter from "./components/EggCounter";
+import SimpleEggCounter from "./components/SimpleEggCounter";
 import TaskBoard from "./components/TaskBoard";
 import Expenses from "./components/Expenses";
 import Chickens from "./components/Chickens";
 import AddChickenModal from "./components/AddChickenModal";
-import { Egg, Menu, DollarSign, Bird } from "lucide-react";
+
+const { useState, useEffect } = React;
 
 type View = "eggs" | "tasks" | "expenses" | "chickens";
 
@@ -26,7 +27,7 @@ function App() {
   const renderView = () => {
     switch (activeView) {
       case "eggs":
-        return <EggCounter />;
+        return <SimpleEggCounter />;
       case "tasks":
         return <TaskBoard />;
       case "expenses":
@@ -34,7 +35,7 @@ function App() {
       case "chickens":
         return <Chickens onOpenModal={() => setIsModalOpen(true)} />;
       default:
-        return <EggCounter />;
+        return <SimpleEggCounter />;
     }
   };
 
@@ -46,7 +47,7 @@ function App() {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 coop-yellow rounded-full flex items-center justify-center">
-                <Egg className="text-coop-brown text-lg" />
+                <span className="text-coop-brown text-lg">🥚</span>
               </div>
               <div>
                 <h1 className="text-xl font-bold text-coop-brown">CoopKeeper</h1>
