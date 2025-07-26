@@ -5,40 +5,48 @@ interface Task {
   id: string;
   name: string;
   description: string;
-  icon: any;
+  iconName: string;
   completed: boolean;
 }
+
+const iconMap = {
+  feed: Utensils,
+  water: Droplets,
+  collect: Egg,
+  clean: Fan,
+  health: Stethoscope,
+};
 
 const defaultTasks: Omit<Task, "completed">[] = [
   {
     id: "feed",
     name: "Feed hens",
     description: "Morning and evening feeding",
-    icon: Utensils,
+    iconName: "feed",
   },
   {
     id: "water",
     name: "Change water",
     description: "Fresh water daily",
-    icon: Droplets,
+    iconName: "water",
   },
   {
     id: "collect",
     name: "Collect eggs",
     description: "Check nesting boxes",
-    icon: Egg,
+    iconName: "collect",
   },
   {
     id: "clean",
     name: "Clean bedding",
     description: "Replace dirty bedding",
-    icon: Fan,
+    iconName: "clean",
   },
   {
     id: "health",
     name: "Health check",
     description: "Observe behavior and appearance",
-    icon: Stethoscope,
+    iconName: "health",
   },
 ];
 
@@ -86,7 +94,7 @@ export default function TaskBoard() {
 
       {/* Task Items */}
       {tasks.map((task) => {
-        const IconComponent = task.icon;
+        const IconComponent = iconMap[task.iconName as keyof typeof iconMap] || Utensils;
         return (
           <div key={task.id} className="bg-white rounded-xl shadow-sm p-4 flex items-center space-x-4">
             <input
