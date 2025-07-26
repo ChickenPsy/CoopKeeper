@@ -9,6 +9,7 @@ function SimpleNavBar({ activeView, onViewChange }: { activeView: string; onView
     { id: "tasks", label: "Tasks", icon: "📋" },
     { id: "expenses", label: "Expenses", icon: "💰" },
     { id: "chickens", label: "Chickens", icon: "🐔" },
+    { id: "contact", label: "Contact", icon: "📞" },
   ];
 
   return (
@@ -498,6 +499,62 @@ function Chickens() {
   );
 }
 
+function Contact() {
+  const handleSendFeedback = () => {
+    window.location.href = 'mailto:eggsquadlabs@proton.me';
+  };
+
+  const handleBuyMeCoffee = () => {
+    window.open('https://coff.ee/eggsquadlabs', '_blank');
+  };
+
+  return (
+    <div className="space-y-8">
+      <div className="text-center">
+        <h2 className="text-2xl font-bold text-coop-brown dark:text-yellow-400 mb-4">Contact & Support</h2>
+        <p className="text-gray-600 dark:text-gray-300 mb-6">
+          Have feedback or questions? Reach out any time.
+        </p>
+        
+        <button
+          onClick={handleSendFeedback}
+          className="w-full coop-brown font-semibold py-3 px-6 rounded-full hover:bg-opacity-90 transition-colors mb-8"
+        >
+          Send Feedback
+        </button>
+      </div>
+
+      <div className="border-t border-gray-200 dark:border-gray-700 pt-8">
+        <div className="text-center">
+          <h3 className="text-xl font-semibold text-coop-brown dark:text-yellow-400 mb-4">
+            Support CoopKeeper
+          </h3>
+          <p className="text-gray-600 dark:text-gray-300 mb-6">
+            If CoopKeeper helps you manage your flock, consider buying us a coffee ☕
+          </p>
+          
+          <button
+            onClick={handleBuyMeCoffee}
+            className="w-full coop-brown font-semibold py-3 px-6 rounded-full hover:bg-opacity-90 transition-colors"
+          >
+            Buy Me a Coffee
+          </button>
+        </div>
+      </div>
+
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 text-center">
+        <div className="text-4xl mb-4">🐔</div>
+        <h4 className="text-lg font-semibold text-coop-brown dark:text-yellow-400 mb-2">
+          Thank you for using CoopKeeper!
+        </h4>
+        <p className="text-gray-600 dark:text-gray-300 text-sm">
+          We're committed to helping chicken keepers manage their flocks with ease.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 function WeeklyReminderModal({ onClose }: { onClose: () => void }) {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -562,6 +619,7 @@ export default function App() {
       case "tasks": return <TaskBoard />;
       case "expenses": return <Expenses />;
       case "chickens": return <Chickens />;
+      case "contact": return <Contact />;
       default: return <EggCounter />;
     }
   };
