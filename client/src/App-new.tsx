@@ -455,8 +455,23 @@ function Expenses() {
 }
 
 function Chickens() {
-  const [chickens, setChickens] = useState<Array<{id: string; name: string; breed: string; dateOfBirth: string; photo?: string}>>([]);
+  const [chickens, setChickens] = useState<Array<{
+    id: string; 
+    name: string; 
+    breed: string; 
+    ageInWeeks: number; 
+    photo?: string;
+    notes?: string;
+  }>>([]);
   const [showModal, setShowModal] = useState(false);
+  const [expandedChicken, setExpandedChicken] = useState<string | null>(null);
+  const [formData, setFormData] = useState({
+    name: '',
+    breed: '',
+    ageInWeeks: '',
+    photo: '',
+    notes: ''
+  });
 
   useEffect(() => {
     const savedChickens = localStorage.getItem("coop-chickens");
@@ -465,52 +480,144 @@ function Chickens() {
     }
   }, []);
 
-  const calcAge = (dateOfBirth: string) => {
-    const birth = new Date(dateOfBirth);
-    const now = new Date();
-    const diffMs = now.getTime() - birth.getTime();
-    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-    
-    if (diffDays < 30) {
-      return `${diffDays} day${diffDays !== 1 ? 's' : ''} old`;
-    } else if (diffDays < 365) {
-      const months = Math.floor(diffDays / 30);
+  const formatAge = (weeks: number) => {
+    if (weeks < 4) {
+      return `${weeks} week${weeks !== 1 ? 's' : ''} old`;
+    } else if (weeks < 52) {
+      const months = Math.floor(weeks / 4.33);
       return `${months} month${months !== 1 ? 's' : ''} old`;
     } else {
-      const years = Math.floor(diffDays / 365);
+      const years = Math.floor(weeks / 52);
+      const remainingWeeks = weeks % 52;
+      const months = Math.floor(remainingWeeks / 4.33);
+      if (months > 0) {
+        return `${years} year${years !== 1 ? 's' : ''}, ${months} month${months !== 1 ? 's' : ''} old`;
+      }
       return `${years} year${years !== 1 ? 's' : ''} old`;
     }
   };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const result = event.target?.result as string;
+        setFormData(prev => ({ ...prev, photo: result }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSave = () => {
+    if (!formData.name.trim()) return;
+
+    const newChicken = {
+      id: Date.now().toString(),
+      name: formData.name.trim(),
+      breed: formData.breed.trim() || 'Mixed Breed',
+      ageInWeeks: parseInt(formData.ageInWeeks) || 0,
+      photo: formData.photo,
+      notes: formData.notes.trim()
+    };
+
+    const updatedChickens = [...chickens, newChicken];
+    setChickens(updatedChickens);
+    localStorage.setItem("coop-chickens", JSON.stringify(updatedChickens));
+
+    // Reset form and close modal
+    setFormData({ name: '', breed: '', ageInWeeks: '', photo: '', notes: '' });
+    setShowModal(false);
+  };
+
+  const handleCancel = () => {
+    setFormData({ name: '', breed: '', ageInWeeks: '', photo: '', notes: '' });
+    setShowModal(false);
+  };
+
+  const toggleExpanded = (chickenId: string) => {
+    setExpandedChicken(expandedChicken === chickenId ? null : chickenId);
+  };
+
+  const breedOptions = [
+    'Rhode Island Red',
+    'Leghorn',
+    'Plymouth Rock',
+    'Australorp',
+    'Buff Orpington',
+    'New Hampshire Red',
+    'Sussex',
+    'Wyandotte',
+    'Marans',
+    'Silkie',
+    'Mixed Breed',
+    'Other'
+  ];
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold text-coop-brown dark:text-yellow-400">My Chickens</h2>
         <div className="text-sm text-gray-600 dark:text-gray-300">
-          {chickens.length} chickens
+          {chickens.length} chicken{chickens.length !== 1 ? 's' : ''}
         </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {chickens.length === 0 ? (
           <div className="col-span-full bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 text-center">
+            <div className="text-4xl mb-3">🐔</div>
             <p className="text-gray-500 dark:text-gray-400">No chickens added yet</p>
+            <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">Tap the + button to add your first chicken</p>
           </div>
         ) : (
           chickens.map((chicken) => (
             <div key={chicken.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden">
-              <div className="w-full h-32 bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-                {chicken.photo ? (
-                  <img src={chicken.photo} alt={chicken.name} className="w-full h-32 object-cover" />
-                ) : (
-                  <span className="text-4xl">🐔</span>
-                )}
+              <div 
+                className="cursor-pointer"
+                onClick={() => toggleExpanded(chicken.id)}
+              >
+                <div className="w-full h-32 bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                  {chicken.photo ? (
+                    <img src={chicken.photo} alt={chicken.name} className="w-full h-32 object-cover" />
+                  ) : (
+                    <span className="text-4xl">🐔</span>
+                  )}
+                </div>
+                <div className="p-4">
+                  <h3 className="font-bold text-coop-brown dark:text-yellow-400">{chicken.name}</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-300">{formatAge(chicken.ageInWeeks)}</p>
+                  {expandedChicken !== chicken.id && (
+                    <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">Tap for details</p>
+                  )}
+                </div>
               </div>
-              <div className="p-4">
-                <h3 className="font-bold text-coop-brown dark:text-yellow-400">{chicken.name}</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-300">{chicken.breed}</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">{calcAge(chicken.dateOfBirth)}</p>
-              </div>
+              
+              {expandedChicken === chicken.id && (
+                <div className="px-4 pb-4 border-t border-gray-200 dark:border-gray-700 pt-3">
+                  <div className="space-y-2 text-sm">
+                    <div>
+                      <span className="font-medium text-gray-700 dark:text-gray-300">Breed: </span>
+                      <span className="text-gray-600 dark:text-gray-400">{chicken.breed}</span>
+                    </div>
+                    <div>
+                      <span className="font-medium text-gray-700 dark:text-gray-300">Age: </span>
+                      <span className="text-gray-600 dark:text-gray-400">{chicken.ageInWeeks} weeks</span>
+                    </div>
+                    {chicken.notes && (
+                      <div>
+                        <span className="font-medium text-gray-700 dark:text-gray-300">Notes: </span>
+                        <span className="text-gray-600 dark:text-gray-400">{chicken.notes}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           ))
         )}
@@ -525,15 +632,111 @@ function Chickens() {
 
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 w-full max-w-md">
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
             <h3 className="text-lg font-bold text-coop-brown dark:text-yellow-400 mb-4">Add New Chicken</h3>
-            <p className="text-gray-600 dark:text-gray-300 mb-4">Feature coming soon!</p>
-            <button
-              onClick={() => setShowModal(false)}
-              className="w-full coop-brown font-semibold py-2 px-4 rounded-lg"
-            >
-              Close
-            </button>
+            
+            <div className="space-y-4">
+              {/* Name Input */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Chicken Name *
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  placeholder="Enter chicken name"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
+                  required
+                />
+              </div>
+
+              {/* Breed Dropdown */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Breed (optional)
+                </label>
+                <select
+                  name="breed"
+                  value={formData.breed}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
+                >
+                  <option value="">Select a breed</option>
+                  {breedOptions.map(breed => (
+                    <option key={breed} value={breed}>{breed}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Age Input */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Age in weeks
+                </label>
+                <input
+                  type="number"
+                  name="ageInWeeks"
+                  value={formData.ageInWeeks}
+                  onChange={handleInputChange}
+                  placeholder="0"
+                  min="0"
+                  max="520"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
+                />
+              </div>
+
+              {/* Photo Upload */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Photo (optional)
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
+                />
+                {formData.photo && (
+                  <div className="mt-2">
+                    <img src={formData.photo} alt="Preview" className="w-16 h-16 object-cover rounded-lg" />
+                  </div>
+                )}
+              </div>
+
+              {/* Notes Textarea */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Notes (optional)
+                </label>
+                <textarea
+                  name="notes"
+                  value={formData.notes}
+                  onChange={handleInputChange}
+                  placeholder="Any additional notes about your chicken..."
+                  rows={3}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent resize-none"
+                />
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex space-x-3 mt-6">
+              <button
+                onClick={handleSave}
+                disabled={!formData.name.trim()}
+                className="flex-1 coop-brown font-semibold py-3 px-6 rounded-full hover:bg-opacity-90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Save
+              </button>
+              <button
+                onClick={handleCancel}
+                className="flex-1 px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-semibold rounded-full hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
       )}
