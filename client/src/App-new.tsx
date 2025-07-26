@@ -37,6 +37,7 @@ function SimpleNavBar({ activeView, onViewChange }: { activeView: string; onView
 function EggCounter() {
   const [todayCount, setTodayCount] = useState(0);
   const [weeklyData, setWeeklyData] = useState<number[]>([0, 0, 0, 0, 0, 0, 0]);
+  const [eggAudio, setEggAudio] = useState<HTMLAudioElement | null>(null);
 
   const today = new Date().toISOString().split('T')[0];
 
@@ -55,15 +56,36 @@ function EggCounter() {
       weekData.push(count ? parseInt(count) : 0);
     }
     setWeeklyData(weekData);
-  }, [today]);
 
-  const playEggSound = () => {
-    try {
-      const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+NwumwfBCuJ0+vCdSEFI3nC7dmNOggTYbPl5qxeGgk+ltv1unE');
-    } catch (e) {
-      console.log('Sound not available');
-    }
-  };
+    // Create a simple egg click sound using Web Audio API
+    const createEggSound = () => {
+      try {
+        const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        // Create egg crack sound - short, soft tone
+        oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+        oscillator.frequency.exponentialRampToValueAtTime(200, audioContext.currentTime + 0.1);
+        
+        gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
+        
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.15);
+        
+        return { audioContext, oscillator, gainNode };
+      } catch (e) {
+        console.log('Web Audio API not supported');
+        return null;
+      }
+    };
+    
+    setEggAudio(createEggSound as any);
+  }, [today]);
 
   const addEgg = () => {
     const newCount = todayCount + 1;
@@ -74,7 +96,27 @@ function EggCounter() {
     newWeeklyData[6] = newCount;
     setWeeklyData(newWeeklyData);
     
-    playEggSound();
+    // Play egg sound on user interaction
+    try {
+      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      // Create egg crack sound - short, soft tone
+      oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+      oscillator.frequency.exponentialRampToValueAtTime(200, audioContext.currentTime + 0.1);
+      
+      gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
+      
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.15);
+    } catch (e) {
+      console.log('Audio playback failed:', e);
+    }
   };
 
   const resetCount = () => {
