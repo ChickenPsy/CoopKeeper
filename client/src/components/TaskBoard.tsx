@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Utensils, Droplets, Egg, Fan, Stethoscope } from "lucide-react";
 
 interface Task {

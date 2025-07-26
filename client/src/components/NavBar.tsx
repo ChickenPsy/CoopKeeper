@@ -1,3 +1,4 @@
+import React from "react";
 import { Egg, Menu, DollarSign, Bird } from "lucide-react";
 
 type View = "eggs" | "tasks" | "expenses" | "chickens";

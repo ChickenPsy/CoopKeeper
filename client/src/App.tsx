@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import NavBar from "./components/NavBar";
 import EggCounter from "./components/EggCounter";
 import TaskBoard from "./components/TaskBoard";
