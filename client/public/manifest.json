@@ -1,0 +1,35 @@
+{
+  "name": "CoopKeeper - Chicken Coop Management",
+  "short_name": "CoopKeeper",
+  "description": "Complete chicken coop management PWA for tracking eggs, tasks, expenses, and chicken profiles",
+  "theme_color": "#F3D34A",
+  "background_color": "#F3D34A",
+  "display": "standalone",
+  "orientation": "portrait",
+  "scope": "/",
+  "start_url": "/",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' fill='%23F3D34A' rx='20'/><text x='96' y='120' font-size='80' fill='%236F4E37' text-anchor='middle' font-family='system-ui'>🥚</text></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' fill='%23F3D34A' rx='50'/><text x='256' y='320' font-size='200' fill='%236F4E37' text-anchor='middle' font-family='system-ui'>🥚</text></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "utilities"],
+  "screenshots": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 390 844'><rect width='390' height='844' fill='%23f8fafc'/><rect x='0' y='0' width='390' height='80' fill='white'/><circle cx='50' cy='40' r='20' fill='%23F3D34A'/><text x='80' y='35' font-size='16' fill='%236F4E37' font-family='system-ui' font-weight='bold'>CoopKeeper</text><text x='80' y='50' font-size='12' fill='%23666' font-family='system-ui'>Today, Jan 15</text></svg>",
+      "sizes": "390x844",
+      "type": "image/svg+xml",
+      "form_factor": "narrow",
+      "label": "CoopKeeper main screen"
+    }
+  ]
+}
