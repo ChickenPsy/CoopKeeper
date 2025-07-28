@@ -79,6 +79,11 @@ Preferred communication style: Simple, everyday language.
 - **Database**: Neon serverless PostgreSQL (connection ready but not actively used)
 - **Migrations**: Drizzle-kit for schema management
 
+### Android App Integration
+- **Deep Linking**: Google Play domain verification via assetlinks.json
+- **Package Name**: com.coopkeeper.app
+- **Verification File**: Located at `client/public/.well-known/assetlinks.json`
+
 ## Deployment Strategy
 
 ### Production Build Process
